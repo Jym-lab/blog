@@ -97,14 +97,12 @@ async function updateFrontMatter(file ,filePath, template, current_date) {
     const current_date = dayjs.utc().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
 
     if (FILES.length === 0){
-        await executeCommand(`pnpm lint`)
         process.exit(0);
     }
     
     for (const file of FILES) {
         await updateFrontMatter(file ,path.resolve(__dirname, `../${file}`), template, current_date);
     }
-    await executeCommand(`pnpm lint`)
     process.exit(0)
 })().catch(error => {
       console.error(error);
