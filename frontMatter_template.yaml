@@ -1,0 +1,16 @@
+title:
+  type: input
+  message: 'Enter the title for the new post:'
+  default: 'Title'
+description:
+  type: input
+  message: 'Enter a description for the post:'
+  default: 'Description'
+tags:
+  type: input
+  message: 'Enter the tags (comma-separated):'
+  default: "[tag1, tag2 ...]"
+hidden:
+  type: list
+  message: 'Do you want to make this post public?'
+  choices: [No, Yes]
