@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install && pnpm husky add .husky/pre-commit \"exec < /dev/tty && node scripts/pre-commit.js\""
+    "prepare": "husky install"
   },
   "dependencies": {
     "dayjs": "^1.11.11",
