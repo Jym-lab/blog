@@ -1,53 +1,34 @@
+import { POSTS_DIR } from '@/utils/paths';
 import fs from 'fs'
 import path from 'path'
 
-const cacheFiles: { [key: string]: string[] } = {};
+const cacheFiles: { [key: string]: { posts: string[], categories: string[] } } = {};
 
 const isMdxFile = (filePath: string): boolean => path.extname(filePath) === '.mdx';
 
-const fetchAllFiles = (dir: string, depth = 0, maxDepth = 2, results: string[] = []) => {
-    if (depth > maxDepth) return results;
+const fetchAllFiles = (dir: string, depth = 0, maxDepth = 2, posts: string[] = [], categories: string[] = []) => {
+    if (depth > maxDepth) return {categories, posts};
 
     fs.readdirSync(dir).forEach((file) => {
         const filePath = path.join(dir, file);
         const stat = fs.statSync(filePath);
 
         if (stat && stat.isDirectory()) {
-            if (depth != maxDepth) results.push(filePath);
-            fetchAllFiles(filePath, depth + 1, maxDepth, results);
+            if (depth != maxDepth) categories.push(path.relative(POSTS_DIR, filePath));
+            fetchAllFiles(filePath, depth + 1, maxDepth, posts, categories);
         } else if (isMdxFile(filePath)) {
-            results.push(filePath);
+            posts.push(filePath);
         }
     });
 
-    return results;
+    return {categories, posts};
 };
 
-export const getAllFiles = (dir: string) => {
-    if (cacheFiles[dir]) return cacheFiles[dir];
+export const getAllFiles = () => {
+    if (cacheFiles[POSTS_DIR]) return cacheFiles[POSTS_DIR];
 
-    const results = fetchAllFiles(dir);
-    cacheFiles[dir] = results;
+    const posts = fetchAllFiles(POSTS_DIR);
+    cacheFiles[POSTS_DIR] = posts;
 
-    return results;
+    return posts;
 };
-
-export const getPostsInfo = (dir: string) => {
-    const allFiles = getAllFiles(dir)
-    const posts: {category: string, file: string}[] = [];
-    const categories: string[] = [];
-    allFiles.forEach(filePath => {
-        const relativePath = path.relative(dir, filePath);
-        const splitPath = relativePath.split(path.sep);
-    
-        if (isMdxFile(filePath)) {
-            posts.push({
-                category: splitPath.slice(0, -1).join(path.sep),
-                file: splitPath[splitPath.length - 1]
-            });
-        } else {
-            categories.push(relativePath);
-        }
-    });
-    return {categories, posts}
-}
