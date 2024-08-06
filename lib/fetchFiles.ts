@@ -1,14 +1,11 @@
+import { resultCache } from '@/utils/cache';
+import { isMdxFile } from '@/utils/helpers';
 import { POSTS_DIR } from '@/utils/paths';
 import fs from 'fs'
 import path from 'path'
 
-const cacheFiles: { [key: string]: { posts: string[], categories: string[] } } = {};
-
-const isMdxFile = (filePath: string): boolean => path.extname(filePath) === '.mdx';
-
 const fetchAllFiles = (dir: string, depth = 0, maxDepth = 2, posts: string[] = [], categories: string[] = []) => {
     if (depth > maxDepth) return {categories, posts};
-
     fs.readdirSync(dir).forEach((file) => {
         const filePath = path.join(dir, file);
         const stat = fs.statSync(filePath);
@@ -24,11 +21,4 @@ const fetchAllFiles = (dir: string, depth = 0, maxDepth = 2, posts: string[] = [
     return {categories, posts};
 };
 
-export const getAllFiles = () => {
-    if (cacheFiles[POSTS_DIR]) return cacheFiles[POSTS_DIR];
-
-    const posts = fetchAllFiles(POSTS_DIR);
-    cacheFiles[POSTS_DIR] = posts;
-
-    return posts;
-};
+export const getAllFiles = () => resultCache('getAllFiles', () => fetchAllFiles(POSTS_DIR));
