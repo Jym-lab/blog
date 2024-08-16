@@ -12,6 +12,7 @@
   "dependencies": {
     "dayjs": "^1.11.11",
     "fs-extra": "^11.2.0",
+    "gray-matter": "^4.0.3",
     "husky": "8",
     "inquirer": "^8.2.6",
     "next": "14.2.4",
