@@ -14,6 +14,7 @@ export const getPostList = async (): Promise<PostListItem[]> => {
         const file = await fs.promises.readFile(post.post, 'utf-8');
         const { data } = matter(file);
         const grayMatter = userCustomFormat(data as PostMetadata);
+        const slug = `${post.category}/${path.basename(post.post, '.mdx')}`
 
         grayMatter.category = post.category
         if (post.category === '.') grayMatter.category = 'uncategorized';
@@ -22,7 +23,7 @@ export const getPostList = async (): Promise<PostListItem[]> => {
             meta: {
                 ...grayMatter,
             },
-            slug: grayMatter.category,
+            slug: slug,
         };
     });
 
